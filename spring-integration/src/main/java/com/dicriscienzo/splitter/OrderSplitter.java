@@ -2,11 +2,10 @@ package com.dicriscienzo.splitter;
 
 import com.dicriscienzo.model.Order;
 
-public class OrderSplitter extends AbstractMessageSplitter{
+public class OrderSplitter{
 
-	 @Override
-	 protected Object splitMessage(Message message) { 
-	  return ((Order)message.getPayload()).getOrderItems();
+	 public Object splitMessage(Order message) { 
+	  return message.getOrderItems();
 	 }
 
 	}
