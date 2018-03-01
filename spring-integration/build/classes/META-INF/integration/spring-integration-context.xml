@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns = "http://www.springframework.org/schema/beans"
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:int="http://www.springframework.org/schema/integration"
+   xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+   xmlns:util="http://www.springframework.org/schema/util"
+   xmlns:jms="http://www.springframework.org/schema/integration/jms"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xsi:schemaLocation = "
+	http://www.springframework.org/schema/integration 
+	http://www.springframework.org/schema/integration/spring-integration-4.3.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/integration/jms 
+	http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+	http://www.springframework.org/schema/integration/stream
+	http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
+	
+	
+	<int:gateway id="shop" service-interface="com.dicriscienzo.gateway.Shop"></int:gateway>
+	<int:channel id="ordersChannel" />
+	<int:channel id="processedItems" /> 
+	<int:channel id="bookItemsChannel">
+	  <int:queue capacity="10"></int:queue>
+	</int:channel>
+	
+	<int:channel id="musicItemsChannel">
+	  <int:queue capacity="10"></int:queue>
+	</int:channel>
+	
+	<int:channel id="softwareItemsChannel">
+	  <int:queue capacity="10"></int:queue>
+	</int:channel>
+	
+	<int:router input-channel="orderItemsChannel" method="routeOrder" ref="orderRouter">
+	 	<bean class="com.dicriscienzo.router.OrderItemRouter" id="orderRouter"/>
+	</int:router>
+	
+	<int:service-activator input-channel="bookItemsChannel" method="processBooks" output-channel="processedItems" ref="shopkeeper">
+		<bean class="com.dicriscienzo.service.Shopkeeper" id="shopkeeper"/>
+	</int:service-activator>
+
+	<int:service-activator input-channel="musicItemsChannel" method="processMusic" output-channel="processedItems" ref="shopkeeper">
+	 	<bean class="com.dicriscienzo.service.Shopkeeper" id="shopkeeper"/>
+	</int:service-activator>
+ 	
+ 	<int:service-activator input-channel="softwareItemsChannel" method="processSoftware" output-channel="processedItems" ref="shopkeeper">
+ 		<bean class="com.dicriscienzo.service.Shopkeeper" id="shopkeeper"/>
+	</int:service-activator>
+	
+	<int:aggregator input-channel="processedItems" method="prepareDelivery" output-channel="deliveries">
+ 		<bean class="com.dicriscienzo.aggregator.OrderCompleter"></bean>
+	</int:aggregator>
+	
+	<int-stream:stdout-channel-adapter id="deliveries" />
+	<int:poller default="true" fixed-delay="1000" id="poller"></int:poller>
+	
+ 	
