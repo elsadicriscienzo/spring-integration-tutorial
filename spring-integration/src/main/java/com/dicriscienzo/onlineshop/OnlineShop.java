@@ -3,8 +3,12 @@ package com.dicriscienzo.onlineshop;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import com.dicriscienzo.gateway.Shop;
 import com.dicriscienzo.model.Book;
 import com.dicriscienzo.model.MusicCD;
@@ -12,14 +16,16 @@ import com.dicriscienzo.model.Order;
 import com.dicriscienzo.model.OrderItem;
 import com.dicriscienzo.model.Software;
 
+
 public class OnlineShop {
 	
-	private static final Logger log = Logger.getLogger(OnlineShop.class);
+	
+	private static final Logger log = LoggerFactory.getLogger(OnlineShop.class);
 
 	 public static void main(String[] args) {
 
 	  AbstractApplicationContext context =
-	   new ClassPathXmlApplicationContext("/META-INF/com/prodcod/shop.xml", OnlineShop.class);
+	   new ClassPathXmlApplicationContext("/META-INF/shop.xml", OnlineShop.class);
 
 	  Shop shop = (Shop) context.getBean("shop");
 
