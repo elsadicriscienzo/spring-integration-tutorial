@@ -7,5 +7,7 @@ public class OrderSplitter{
 	 public Object splitMessage(Order message) { 
 	  return message.getOrderItems();
 	 }
+	 
+	 
 
 	}
